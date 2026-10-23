@@ -30,124 +30,16 @@ object ResultSheetScannerService {
         .build()
 
     /**
-     * Analyze image of a results/score paper using Gemini 2.5 Flash Vision.
+     * تحليل ورقة النتائج باستخدام Gemini 3.8 Flash عبر Firebase AI Logic
      */
     suspend fun analyzeImage(bitmap: Bitmap): ScanResult = withContext(Dispatchers.IO) {
-        val apiKey = try {
-            BuildConfig.GEMINI_API_KEY
-        } catch (e: Exception) {
-            ""
-        }
-
-        if (apiKey.isNullOrBlank() || apiKey == "MY_GEMINI_API_KEY") {
-            return@withContext ScanResult.Error(
-                message = "لم يتم ضبط مفتاح Gemini API في إعدادات التطبيق. يمكنك استخدام النماذج الجاهزة أو إدخال/لصق ورقة النتائج نصياً.",
-                canFallback = true
-            )
-        }
-
-        try {
-            // Resize bitmap if too large to conserve bandwidth and memory
-            val scaledBitmap = scaleBitmapIfNeeded(bitmap, maxDimension = 1024)
-            val base64Data = bitmapToBase64(scaledBitmap)
-
-            val prompt = """
-                أنت خبير في التعرف الضوئي (OCR) على كشوف نقاط وأوراق نتائج مادة التربية البدنية والرياضية (EPS) في الثانويات الجزائرية.
-                قم بقراءة ورقة النتائج المرفقة واستخراج جميع التلاميذ والنقاط بدقة.
-                
-                يجب أن يكون الناتج حصراً بصيغة JSON Array بدون أي نص قبله أو بعده:
-                [
-                  {
-                    "regNumber": 1,
-                    "fullName": "اللقب والاسم الكامل",
-                    "gender": "MALE",
-                    "continuousScore": 15.5,
-                    "testScore": 14.0,
-                    "examScore": 16.0,
-                    "individualScore": 15.0,
-                    "isExempt": false,
-                    "notes": ""
-                  }
-                ]
-                
-                قواعد هامة:
-                1. "gender": استخدم "MALE" للذكور و "FEMALE" للإناث.
-                2. العلامات تكون أعداداً عشرية من 0 إلى 20. إذا لم توجد علامة معينة في الورقة ضعها null.
-                3. إذا كان التلميذ معفى طبياً (معفى أو exempt أو C.M)، اجعل "isExempt": true.
-                4. استخرج كل تلميذ في سطر مستقل مع رقم الترتيب إن وجد.
-            """.trimIndent()
-
-            val requestJson = JSONObject().apply {
-                val contentsArray = JSONArray().apply {
-                    val contentObj = JSONObject().apply {
-                        val partsArray = JSONArray().apply {
-                            // Text prompt
-                            put(JSONObject().apply {
-                                put("text", prompt)
-                            })
-                            // Image data
-                            put(JSONObject().apply {
-                                val inlineData = JSONObject().apply {
-                                    put("mimeType", "image/jpeg")
-                                    put("data", base64Data)
-                                }
-                                put("inlineData", inlineData)
-                            })
-                        }
-                        put("parts", partsArray)
-                    }
-                    put(contentObj)
-                }
-                put("contents", contentsArray)
-
-                val generationConfig = JSONObject().apply {
-                    put("temperature", 0.2)
-                    put("responseMimeType", "application/json")
-                }
-                put("generationConfig", generationConfig)
+        when (val res = com.example.data.ai.GeminiAiService.analyzeResultSheet(bitmap)) {
+            is com.example.data.ai.AiResult.Success -> {
+                ScanResult.Success(res.data, source = "التعرف الذكي بالذكاء الاصطناعي (Gemini 3.8 Flash)")
             }
-
-            val requestBody = requestJson.toString().toRequestBody("application/json".toMediaType())
-            val url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$apiKey"
-
-            val request = Request.Builder()
-                .url(url)
-                .post(requestBody)
-                .build()
-
-            val response = okHttpClient.newCall(request).execute()
-            if (!response.isSuccessful) {
-                val errBody = response.body?.string() ?: ""
-                return@withContext ScanResult.Error(
-                    message = "خطأ من خادم الذكاء الاصطناعي (${response.code}): $errBody",
-                    canFallback = true
-                )
+            is com.example.data.ai.AiResult.Error -> {
+                ScanResult.Error(res.message, canFallback = res.canFallback)
             }
-
-            val responseBody = response.body?.string() ?: ""
-            val jsonRoot = JSONObject(responseBody)
-            val candidates = jsonRoot.optJSONArray("candidates")
-            if (candidates == null || candidates.length() == 0) {
-                return@withContext ScanResult.Error("لم يتم العثور على محتوى من تحليل الصورة.", canFallback = true)
-            }
-
-            val candidate = candidates.getJSONObject(0)
-            val content = candidate.getJSONObject("content")
-            val parts = content.getJSONArray("parts")
-            val textOutput = parts.getJSONObject(0).getString("text")
-
-            val parsedItems = parseJsonResults(textOutput)
-            if (parsedItems.isEmpty()) {
-                return@withContext ScanResult.Error("لم يتم العثور على تلاميذ أو نقاط واضحة في الصورة.", canFallback = true)
-            }
-
-            ScanResult.Success(parsedItems, source = "التعرف الذكي بالذكاء الاصطناعي (Gemini Vision)")
-        } catch (e: Exception) {
-            e.printStackTrace()
-            ScanResult.Error(
-                message = "تعذر تحليل الصورة: ${e.localizedMessage ?: e.message}",
-                canFallback = true
-            )
         }
     }
 

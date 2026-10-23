@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AssignmentTurnedIn
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.DirectionsRun
 import androidx.compose.material.icons.filled.DocumentScanner
 import androidx.compose.material.icons.filled.Download
@@ -105,6 +106,7 @@ enum class MainDestination(val titleAr: String, val icon: ImageVector, val tag: 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        com.example.firebase.configureAppCheck(this, intent)
         enableEdgeToEdge()
         setContent {
             MyApplicationTheme {
@@ -126,6 +128,7 @@ fun EpsMainScreen(viewModel: EpsViewModel) {
     var showTeacherLogbook by remember { mutableStateOf(false) }
     var showChangeSportsDialog by remember { mutableStateOf(false) }
     var showStopwatchDialog by remember { mutableStateOf(false) }
+    var showGeminiDialog by remember { mutableStateOf(false) }
 
     val classes by viewModel.classes.collectAsState()
     val selectedClassId by viewModel.selectedClassId.collectAsState()
@@ -179,6 +182,16 @@ fun EpsMainScreen(viewModel: EpsViewModel) {
                         }
                     },
                     actions = {
+                        IconButton(
+                            onClick = { showGeminiDialog = true },
+                            modifier = Modifier.testTag("top_bar_gemini_ai_btn")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AutoAwesome,
+                                contentDescription = "المساعد البيداغوجي الذكي - Gemini AI",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
                         IconButton(
                             onClick = { currentDestination = MainDestination.RANK_BACKUP },
                             modifier = Modifier.testTag("top_bar_download_btn")
@@ -353,6 +366,23 @@ fun EpsMainScreen(viewModel: EpsViewModel) {
         SmartSpeedStopwatchDialog(
             viewModel = viewModel,
             onDismiss = { showStopwatchDialog = false }
+        )
+    }
+
+    if (showGeminiDialog) {
+        val currentClass = classes.firstOrNull { it.id == selectedClassId }
+        val currentTerm by viewModel.selectedTerm.collectAsState()
+        val currentStudents by viewModel.currentClassStudents.collectAsState()
+        val currentAssessments by viewModel.termAssessments.collectAsState()
+        val teacherProfile by viewModel.teacherProfile.collectAsState()
+
+        com.example.ui.components.GeminiPeAssistantDialog(
+            selectedClass = currentClass,
+            selectedTerm = currentTerm,
+            students = currentStudents,
+            termAssessments = currentAssessments,
+            teacherProfile = teacherProfile,
+            onDismiss = { showGeminiDialog = false }
         )
     }
 
