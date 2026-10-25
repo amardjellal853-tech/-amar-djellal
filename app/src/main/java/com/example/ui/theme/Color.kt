@@ -2,46 +2,128 @@ package com.example.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// لوحة ألوان ساطعة وعالية التباين مخصصة للقراءة السهلة والمريحة تحت أشعة الشمس المباشرة وفي الملاعب الرياضية المفتوحة
-// Sunlight Outdoor PE Palette: لا ألوان مظلمة، نصوص سوداء فحيمة عالية التباين، وخلفيات بيضاء ناصعة تمنع الانعكاس
-val SportBlue = Color(0xFF0284C7)          // أزرق سماوي رياضي ناصع وواضح جداً في الشمس
-val SportBlueLight = Color(0xFF38BDF8)     // أزرق فاتح مشرق
-val SportBlueDark = Color(0xFF0369A1)      // أزرق داكن مقروء للنصوص والحدود
-val SportBlueContainer = Color(0xFFE0F2FE) // خلفية مائية ناصعة وخفيفة جداً تريح العين
+// ==========================================
+// 1. ألوان التوافق السابقة (Backward Compatibility)
+// ==========================================
+val SportBlue = Color(0xFF15803D)          // تم ترقيته إلى الأخضر الرياضي المشرق المتناسق
+val SportBlueLight = Color(0xFF22C55E)
+val SportBlueDark = Color(0xFF166534)
+val SportBlueContainer = Color(0xFFDCFCE7)
 
-// ذهبي/برتقالي مشرق للصافرة والبطولات المدرسية
-val SportAmber = Color(0xFFD97706)         // ذهبي شمسي ساطع
-val SportAmberLight = Color(0xFFFBBF24)    // أصفر ناصع
+val SportAmber = Color(0xFFD97706)         // ذهبي شمسي ساطع للبطولات والصافرة
+val SportAmberLight = Color(0xFFFBBF24)
 val SportAmberDark = Color(0xFF92400E)
-val SportAmberContainer = Color(0xFFFEF3C7) // خلفية ذهبية فاتحة ومضيئة
+val SportAmberContainer = Color(0xFFFEF3C7)
 
-val SportGold = Color(0xFFF59E0B)          // أصفر ذهبي واضح ومبهج
+val SportGold = Color(0xFFF59E0B)
 val SportGoldLight = Color(0xFFFDE68A)
 val SportGoldDark = Color(0xFFB45309)
 val SportGoldContainer = Color(0xFFFEF3C7)
 
-// كحلي رياضي ناصع مقروء
-val SportNavy = Color(0xFF0369A1)
-val SportNavyLight = Color(0xFF0284C7)
-val SportNavyContainer = Color(0xFFE0F2FE)
+val SportNavy = Color(0xFF0F766E)
+val SportNavyLight = Color(0xFF14B8A6)
+val SportNavyContainer = Color(0xFFCCFBF1)
 
 val SportTeal = Color(0xFF059669)          // أخضر زمردي ناصع للملاعب
 val SportTealContainer = Color(0xFFD1FAE5)
 
-// ألوان الإجراءات الرياضية الإيجابية والسلبية عالية التباين في ضوء النهار
-val ActionPositive = Color(0xFF15803D)     // أخضر إيجابي ناصع داكن (نجاح/حاضر)
+// إجراءات التقويم والغياب
+val ActionPositive = Color(0xFF15803D)     // حاضر / نجاح
 val ActionPositiveLight = Color(0xFF22C55E)
 val ActionPositiveContainer = Color(0xFFDCFCE7)
 
-val ActionNegative = Color(0xFFB91C1C)     // أحمر سلبي واضح وقوي (خطأ/غياب/معفى)
+val ActionNegative = Color(0xFFB91C1C)     // غياب / معفى / دون الوسط
 val ActionNegativeLight = Color(0xFFEF4444)
 val ActionNegativeContainer = Color(0xFFFEE2E2)
 
-// ألوان النصوص والأسطح: مصممة خصيصاً للقراءة تحت وهج الشمس
-val NeutralDark = Color(0xFF020617)        // أسود فحمي ناصع (أعلى تباين ممكن 18:1 مع الخلفية البيضاء)
-val NeutralMedium = Color(0xFF1E293B)      // رمادي كحلي داكن للعناوين الفرعية والملاحظات
-val NeutralLight = Color(0xFFF1F5F9)       // رمادي ثلجي فاتح للبطاقات الثانوية
-val CardBorder = Color(0xFF94A3B8)         // حدود بطاقات واضحة تفصل العناصر بحدة تحت الشمس
+// ألوان النصوص والأسطح
+val NeutralDark = Color(0xFF0F172A)
+val NeutralMedium = Color(0xFF334155)
+val NeutralLight = Color(0xFFF1F5F9)
+val CardBorder = Color(0xFFCBD5E1)
+val SurfaceLight = Color(0xFFFFFFFF)
+val BackgroundLight = Color(0xFFF8FAFC)
 
-val SurfaceLight = Color(0xFFFFFFFF)       // أبيض ناصع 100% يمنع العتمة والظلمة
-val BackgroundLight = Color(0xFFF8FAFC)     // خلفية مضيئة وفائقة النظافة للقراءة الخارجية
+// ==========================================
+// 2. لوحات الألوان الرياضية الجديدة (New Athleisure Palettes)
+// ==========================================
+
+// --- لوحة 1: الأولمبي الأخضر والذهبي (Olympic Emerald & Gold) [السمة الأساسية الجديدة] ---
+val OlympicGreenPrimary = Color(0xFF15803D)
+val OlympicGreenPrimaryDark = Color(0xFF166534)
+val OlympicGreenContainer = Color(0xFFDCFCE7)
+val OlympicGreenOnContainer = Color(0xFF052E16)
+
+val OlympicGoldSecondary = Color(0xFFD97706)
+val OlympicGoldContainer = Color(0xFFFEF3C7)
+val OlympicGoldOnContainer = Color(0xFF78350F)
+
+val OlympicTealTertiary = Color(0xFF0D9488)
+val OlympicTealContainer = Color(0xFFCCFBF1)
+
+// النسخة الليلية للأخضر الأولمبي
+val OlympicGreenDarkPrimary = Color(0xFF4ADE80)
+val OlympicGreenDarkContainer = Color(0xFF166534)
+val OlympicGreenDarkBackground = Color(0xFF051B11)
+val OlympicGreenDarkSurface = Color(0xFF0B291B)
+val OlympicGreenDarkSurfaceVariant = Color(0xFF163827)
+
+// --- لوحة 2: الأزرق الملكي والبرتقالي الرياضي (Ocean Blue & Dynamic Orange) ---
+val OceanBluePrimary = Color(0xFF1D4ED8)
+val OceanBluePrimaryDark = Color(0xFF1E40AF)
+val OceanBlueContainer = Color(0xFFDBEAFE)
+val OceanBlueOnContainer = Color(0xFF1E3A8A)
+
+val DynamicOrangeSecondary = Color(0xFFEA580C)
+val DynamicOrangeContainer = Color(0xFFFFEDD5)
+val DynamicOrangeOnContainer = Color(0xFF7C2D12)
+
+val AthleticSkyTertiary = Color(0xFF0284C7)
+val AthleticSkyContainer = Color(0xFFE0F2FE)
+
+// النسخة الليلية للأزرق الملكي
+val OceanBlueDarkPrimary = Color(0xFF60A5FA)
+val OceanBlueDarkContainer = Color(0xFF1E40AF)
+val OceanBlueDarkBackground = Color(0xFF0B132B)
+val OceanBlueDarkSurface = Color(0xFF162040)
+val OceanBlueDarkSurfaceVariant = Color(0xFF223158)
+
+// --- لوحة 3: مضمار ألعاب القوى العنابي والذهبي (Crimson Track & Amber) ---
+val CrimsonTrackPrimary = Color(0xFF991B1B)
+val CrimsonTrackPrimaryDark = Color(0xFF7F1D1D)
+val CrimsonTrackContainer = Color(0xFFFEE2E2)
+val CrimsonTrackOnContainer = Color(0xFF450A0A)
+
+val SolarAmberSecondary = Color(0xFFD97706)
+val SolarAmberContainer = Color(0xFFFEF3C7)
+val SolarAmberOnContainer = Color(0xFF78350F)
+
+val BronzeTertiary = Color(0xFFB45309)
+val BronzeContainer = Color(0xFFFFEDD5)
+
+// النسخة الليلية للعنابي
+val CrimsonTrackDarkPrimary = Color(0xFFF87171)
+val CrimsonTrackDarkContainer = Color(0xFF7F1D1D)
+val CrimsonTrackDarkBackground = Color(0xFF1A0A0A)
+val CrimsonTrackDarkSurface = Color(0xFF2D1212)
+val CrimsonTrackDarkSurfaceVariant = Color(0xFF451A1A)
+
+// --- لوحة 4: النهاري عالي التباين تحت الشمس (Sunlight High Contrast) ---
+val SunlightIntensePrimary = Color(0xFF0369A1)
+val SunlightIntenseContainer = Color(0xFFE0F2FE)
+val SunlightIntenseSecondary = Color(0xFFB45309)
+val SunlightIntenseTertiary = Color(0xFF15803D)
+
+// --- لوحة 5: السيان الرياضي المنعش والمضيء (Electric Cyan & Rose) ---
+val ElectricCyanPrimary = Color(0xFF0284C7)
+val ElectricCyanContainer = Color(0xFFE0F2FE)
+val ElectricCoralSecondary = Color(0xFFE11D48)
+val ElectricCoralContainer = Color(0xFFFFE4E6)
+val ElectricMintTertiary = Color(0xFF059669)
+
+// النسخة الليلية للسيان
+val ElectricCyanDarkPrimary = Color(0xFF38BDF8)
+val ElectricCyanDarkContainer = Color(0xFF0369A1)
+val ElectricCyanDarkBackground = Color(0xFF07131D)
+val ElectricCyanDarkSurface = Color(0xFF102336)
+val ElectricCyanDarkSurfaceVariant = Color(0xFF1B364F)

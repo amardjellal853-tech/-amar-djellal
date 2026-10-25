@@ -77,6 +77,8 @@ import com.example.ui.components.AddClassDialog
 import com.example.ui.components.ClassSelectorHeader
 import com.example.ui.components.ResultSheetScannerDialog
 import com.example.ui.screens.AssessmentAttendanceScreen
+import androidx.compose.material.icons.filled.Palette
+import com.example.ui.components.ThemeSelectorDialog
 import com.example.ui.screens.CriteriaScreen
 import com.example.ui.screens.DiagnosticScreen
 import com.example.ui.screens.HandballTrackerScreen
@@ -92,6 +94,7 @@ import com.example.ui.theme.SportAmberDark
 import com.example.ui.theme.SportBlue
 import com.example.ui.theme.SportBlueDark
 import com.example.ui.theme.SportGold
+import com.example.ui.theme.ThemePreferences
 import com.example.ui.viewmodel.EpsViewModel
 
 enum class MainDestination(val titleAr: String, val icon: ImageVector, val tag: String) {
@@ -109,10 +112,17 @@ class MainActivity : ComponentActivity() {
         com.example.firebase.configureAppCheck(this, intent)
         enableEdgeToEdge()
         setContent {
-            MyApplicationTheme {
+            val themePreferences = remember { ThemePreferences(this) }
+            val currentPreset by themePreferences.currentTheme
+            val currentDarkMode by themePreferences.darkModeOption
+
+            MyApplicationTheme(
+                preset = currentPreset,
+                darkModeOption = currentDarkMode
+            ) {
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                     val viewModel: EpsViewModel = viewModel()
-                    EpsMainScreen(viewModel)
+                    EpsMainScreen(viewModel = viewModel, themePreferences = themePreferences)
                 }
             }
         }
@@ -121,7 +131,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EpsMainScreen(viewModel: EpsViewModel) {
+fun EpsMainScreen(viewModel: EpsViewModel, themePreferences: ThemePreferences? = null) {
     var currentDestination by remember { mutableStateOf(MainDestination.ROSTER) }
     var showAddClassDialog by remember { mutableStateOf(false) }
     var showScannerDialog by remember { mutableStateOf(false) }
@@ -129,6 +139,7 @@ fun EpsMainScreen(viewModel: EpsViewModel) {
     var showChangeSportsDialog by remember { mutableStateOf(false) }
     var showStopwatchDialog by remember { mutableStateOf(false) }
     var showGeminiDialog by remember { mutableStateOf(false) }
+    var showThemeDialog by remember { mutableStateOf(false) }
 
     val classes by viewModel.classes.collectAsState()
     val selectedClassId by viewModel.selectedClassId.collectAsState()
@@ -182,6 +193,16 @@ fun EpsMainScreen(viewModel: EpsViewModel) {
                         }
                     },
                     actions = {
+                        IconButton(
+                            onClick = { showThemeDialog = true },
+                            modifier = Modifier.testTag("top_bar_theme_btn")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Palette,
+                                contentDescription = "تغيير ألوان التطبيق والثيم",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
                         IconButton(
                             onClick = { showGeminiDialog = true },
                             modifier = Modifier.testTag("top_bar_gemini_ai_btn")
@@ -404,6 +425,16 @@ fun EpsMainScreen(viewModel: EpsViewModel) {
                 )
                 showChangeSportsDialog = false
             }
+        )
+    }
+
+    if (showThemeDialog && themePreferences != null) {
+        ThemeSelectorDialog(
+            currentPreset = themePreferences.currentTheme.value,
+            currentDarkMode = themePreferences.darkModeOption.value,
+            onSelectPreset = { themePreferences.setThemePreset(it) },
+            onSelectDarkMode = { themePreferences.setDarkModeOption(it) },
+            onDismiss = { showThemeDialog = false }
         )
     }
 }
